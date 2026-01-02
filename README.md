@@ -1,83 +1,8 @@
 # Match Impro
 Une interface simple et versatile pour matchs d'impro
 
-
-===============================================================================
-       MODE D'EMPLOI : CONSOLE DE SCORE MATCH D'IMPROVISATION
-===============================================================================
-
-Idée: Tom de la troupe d'impro Les KOI (Luxembourg), inspiré par le programme 
-LiveScore
-Programmation: GEMINI
-
-Le programme peut être librement utilisé et modifié. Si vous l'utilisez, ce serait 
-sympa de mentionner son concepteur ;-)
-
-1. PRÉSENTATION GÉNÉRALE
-------------------------
-Cette interface est une console de gestion de score et de temps pour les matchs 
-d'improvisation. Elle permet de gérer deux équipes (par défaut: Bleus et Rouges),
-deux chronomètres distincts, les scores, les fautes et la personnalisation visuelle.
-
-
-2. COMMANDES CLAVIER (Raccourcis rapides)
------------------------------------------
-[ ESPACE ]          : Démarrer / Arrêter le chrono de l'improvisation.
-[ R ]               : Réinitialiser le chrono de l'improvisation (3:00).
-[ H ]               : Afficher / Masquer le panneau d'administration (en haut).
-[ FLÈCHE GAUCHE ]   : Ajouter +1 point à l'équipe de GAUCHE.
-[ FLÈCHE DROITE ]   : Ajouter +1 point à l'équipe de DROITE.
-[ CTRL + GAUCHE ]   : Retirer -1 point à l'équipe de GAUCHE.
-[ CTRL + DROITE ]   : Retirer -1 point à l'équipe de DROITE.
-
-3. GESTION DU TEMPS (Chronos)
------------------------------
-- Match (en haut à gauche) :
-    * Cliquez sur "Start/Pause" dans l'admin ou sur le texte "MATCH" pour 
-      lancer/arrêter le temps global.
-    * Cliquez sur le temps affiché pour modifier manuellement les secondes.
-    * Le bouton "Reset" remet le temps de match à 45:00.
-- Improvisation (au centre) :
-    * Utilisez la barre d'espace ou cliquez sur le grand chrono.
-    * À 00:00, le chrono clignote en rouge pour signaler la fin de l'impro.
-    * Cliquez sur le chrono pour ajuster manuellement le temps restant.
-
-4. SCORES ET LOGOS
-------------------
-- Points : Outre les flèches du clavier, vous pouvez cliquer sur les chiffres 
-  des scores pour ajouter +1. Un clic droit sur le score retire -1 point.
-- Logos : Dans le panneau admin, utilisez "Logo G." ou "Logo D." pour charger 
-  une image depuis votre ordinateur. Les boutons "Reset G./D." permettent 
-  d'effacer les images.
-- Noms/Infos : Les noms d'équipes, le titre de l'impro, le nombre de joueurs 
-  et la catégorie sont des champs de texte modifiables en cliquant dessus.
-
-5. SYSTÈME AUTOMATIQUE DES FAUTES
----------------------------------
-- Chaque équipe possède 3 ronds de fautes sous son score.
-- Cliquez sur un rond pour marquer une faute (il devient rouge).
-- RÈGLE DES 3 FAUTES : Lorsque la 3ème faute est cochée :
-    1. Un message clignotant "3 FAUTES: +1 POINT POUR L'EQUIPE ADVERSE" 
-       apparaît au centre de l'écran (entre les scores).
-    2. Après un délai de 5 secondes, le point est automatiquement ajouté à 
-       l'adversaire et le compteur de fautes de l'équipe fautive est remis à zéro.
-
-6. PERSONNALISATION DES COULEURS
---------------------------------
-Le panneau d'administration permet de modifier les couleurs en temps réel :
-- FONDS : Modifie l'arrière-plan de la barre d'admin (1), de la barre de titre (2) 
-  et de la zone de match (3).
-- TEXTES : 
-    * Couleur 1 : Scores, Chrono Match, Catégorie et Alerte "3 Fautes".
-    * Couleur 2 : Chrono Impro, Noms des équipes, Titre.
-    * Couleur 3 : Libellés (Temps restant, Nombre de joueurs, etc.).
-- RESET : Des boutons permettent de restaurer instantanément les couleurs 
-  d'origine pour les fonds ou les textes.
-
-7. CONSEILS D'UTILISATION
--------------------------
-- Masquez le panneau d'administration (touche H) pendant le spectacle pour 
-  une interface propre et immersive.
-- Pour une expérience optimale, utilisez votre navigateur en mode plein écran 
-  (touche F11 sur Windows).
-===============================================================================
+1. Téléchargez les fichiers Lisez-moi.txt et Macth-impro.html sur votre ordi.
+2. Lisez les instructions du fichier Lisez-moi.text
+3. Lancer March-impro.html dans votre navigatezur favori
+4. Configurez
+5. Bon Match!
