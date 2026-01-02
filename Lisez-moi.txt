@@ -15,7 +15,6 @@ Cette interface est une console de gestion de score et de temps pour les matchs
 d'improvisation. Elle permet de gérer deux équipes (par défaut: Bleus et Rouges),
 deux chronomètres distincts, les scores, les fautes et la personnalisation visuelle.
 
-
 2. COMMANDES CLAVIER (Raccourcis rapides)
 -----------------------------------------
 [ ESPACE ]          : Démarrer / Arrêter le chrono de l'improvisation.
@@ -26,8 +25,8 @@ deux chronomètres distincts, les scores, les fautes et la personnalisation visu
 [ CTRL + GAUCHE ]   : Retirer -1 point à l'équipe de GAUCHE.
 [ CTRL + DROITE ]   : Retirer -1 point à l'équipe de DROITE.
 
-3. GESTION DU TEMPS (Chronos)
------------------------------
+3. GESTION DU TEMPS
+-------------------
 - Match (en haut à gauche) :
     * Cliquez sur "Start/Pause" dans l'admin ou sur le texte "MATCH" pour 
       lancer/arrêter le temps global.
@@ -70,7 +69,15 @@ Le panneau d'administration permet de modifier les couleurs en temps réel :
 - RESET : Des boutons permettent de restaurer instantanément les couleurs 
   d'origine pour les fonds ou les textes.
 
-7. CONSEILS D'UTILISATION
+7. SAUVEGARDE ET CHARGEMENT DE CONFIGURATION
+--------------------------------------------
+- Bouton SAVE :
+    * Permet d'exporter votre configuration dans un fichier .json.
+- Bouton LOAD :
+    * Permet de charger un fichier de configuration précédemment enregistré pour 
+      restaurer un état de match ou un profil de couleurs spécifique.
+
+8. CONSEILS D'UTILISATION
 -------------------------
 - Masquez le panneau d'administration (touche H) pendant le spectacle pour 
   une interface propre et immersive.

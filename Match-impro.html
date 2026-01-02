@@ -83,7 +83,7 @@
 
         /* --- ANIMATIONS --- */
         .clignoter { color: #ff0000 !important; animation: blink 0.5s step-end infinite; }
-        .clignoter-alerte { animation: blink 0.5s step-end infinite; } /* Clignote avec Couleur1 */
+        .clignoter-alerte { animation: blink 0.5s step-end infinite; } 
         
         @keyframes blink { 50% { opacity: 0; } }
         
@@ -115,6 +115,11 @@
             <button onclick="document.getElementById('fR').click()">Logo D.</button>
             <button onclick="resetLogo('R')">Reset D.</button>
         </div>
+        <div class="admin-group">
+            CONFIG: <button onclick="saveConfig()">SAVE</button>
+            <button onclick="document.getElementById('fCfg').click()">LOAD</button>
+            <input type="file" id="fCfg" class="hidden" accept=".json" onchange="loadConfig(event)">
+        </div>
         <button onclick="document.getElementById('admin-panel').classList.toggle('hidden')">Masquer (H)</button>
         <input type="file" id="fL" class="hidden" onchange="ldImg(event, 'L')">
         <input type="file" id="fR" class="hidden" onchange="ldImg(event, 'R')">
@@ -124,16 +129,16 @@
         <div class="match-timer" id="m-disp" onclick="adjM()">MATCH: 45:00</div>
         <div style="text-align:center">
             <div class="label-v3">NOMBRE DE JOUEURS</div>
-            <input type="text" class="transparent val-v1" value="ILLIMITÉ" style="text-align:center; width:100%">
+            <input type="text" id="in-players" class="transparent val-v1" value="ILLIMITÉ" style="text-align:center; width:100%">
         </div>
         <div style="text-align:right">
             <div class="label-v3">CATÉGORIE</div>
-            <input type="text" class="transparent val-v1" value="LIBRE" style="text-align:right; width:100%">
+            <input type="text" id="in-cat" class="transparent val-v1" value="LIBRE" style="text-align:right; width:100%">
         </div>
     </div>
 
     <div id="title-bar">
-        <input type="text" class="title-input" value="TITRE DE L'IMPROVISATION">
+        <input type="text" id="in-title" class="title-input" value="TITRE DE L'IMPROVISATION">
     </div>
 
     <div id="match-display">
@@ -144,7 +149,7 @@
 
         <div id="teams-area">
             <div class="team">
-                <input type="text" class="transparent team-name" value="LES BLEUS" style="text-align:center; width:100%">
+                <input type="text" id="in-teamL" class="transparent team-name" value="LES BLEUS" style="text-align:center; width:100%">
                 <div class="logo-box" id="log-L"></div>
                 <div class="score" id="sc-L" onclick="updSc('L',1)" oncontextmenu="event.preventDefault(); updSc('L',-1)">0</div>
                 <div class="fautes" id="ft-L">
@@ -157,7 +162,7 @@
             <div id="fault-alert">3 FAUTES:<br>+1 POINT POUR L'EQUIPE ADVERSE</div>
 
             <div class="team">
-                <input type="text" class="transparent team-name" value="LES ROUGES" style="text-align:center; width:100%">
+                <input type="text" id="in-teamR" class="transparent team-name" value="LES ROUGES" style="text-align:center; width:100%">
                 <div class="logo-box" id="log-R"></div>
                 <div class="score" id="sc-R" onclick="updSc('R',1)" oncontextmenu="event.preventDefault(); updSc('R',-1)">0</div>
                 <div class="fautes" id="ft-R">
@@ -247,6 +252,66 @@
 
         function resetLogo(side) {
             document.getElementById('log-' + side).innerHTML = "";
+        }
+
+        // --- NOUVELLES FONCTIONS SAVE/LOAD ---
+        function saveConfig() {
+            const config = {
+                colors: {
+                    bg1: document.getElementById('cp-bg1').value,
+                    bg2: document.getElementById('cp-bg2').value,
+                    bg3: document.getElementById('cp-bg3').value,
+                    tx1: document.getElementById('cp-tx1').value,
+                    tx2: document.getElementById('cp-tx2').value,
+                    tx3: document.getElementById('cp-tx3').value
+                },
+                timers: { tI, tM },
+                content: {
+                    title: document.getElementById('in-title').value,
+                    players: document.getElementById('in-players').value,
+                    category: document.getElementById('in-cat').value,
+                    teamL: document.getElementById('in-teamL').value,
+                    teamR: document.getElementById('in-teamR').value,
+                    scoreL: scL,
+                    scoreR: scR
+                }
+            };
+            const blob = new Blob([JSON.stringify(config, null, 2)], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `config_match_${new Date().getTime()}.json`;
+            a.click();
+        }
+
+        function loadConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const cfg = JSON.parse(e.target.result);
+                // Couleurs
+                for (let [k, v] of Object.entries(cfg.colors)) {
+                    let cssVar = k.startsWith('bg') ? `--bg-${k.slice(2)}` : `--txt-${k.slice(2)}`;
+                    updCol(cssVar, v);
+                    document.getElementById('cp-' + k).value = v;
+                }
+                // Timers
+                tI = cfg.timers.tI; tM = cfg.timers.tM;
+                document.getElementById('i-disp').innerText = fmt(tI);
+                document.getElementById('m-disp').innerText = "MATCH: " + fmt(tM);
+                // Textes et Scores
+                document.getElementById('in-title').value = cfg.content.title;
+                document.getElementById('in-players').value = cfg.content.players;
+                document.getElementById('in-cat').value = cfg.content.category;
+                document.getElementById('in-teamL').value = cfg.content.teamL;
+                document.getElementById('in-teamR').value = cfg.content.teamR;
+                scL = cfg.content.scoreL; scR = cfg.content.scoreR;
+                document.getElementById('sc-L').innerText = scL;
+                document.getElementById('sc-R').innerText = scR;
+                event.target.value = ""; // Reset file input
+            };
+            reader.readAsText(file);
         }
 
         window.onkeydown=(e)=>{
