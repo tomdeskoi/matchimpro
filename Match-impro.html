@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Console de match d'impro</title>
+    <style>
+        :root {
+            --bg-1: #222e35; --bg-2: #1a1a1a; --bg-3: #000000; 
+            --txt-1: #f1c40f; --txt-2: #ffffff; --txt-3: #888888; 
+        }
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg-3); color: var(--txt-2);
+            font-family: 'Arial Black', sans-serif; text-transform: uppercase;
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        /* --- BARRE DE PRÉSIDENCE --- */
+        #admin-panel {
+            background-color: var(--bg-1); color: white; padding: 10px;
+            display: flex; flex-wrap: wrap; gap: 15px; font-family: sans-serif;
+            font-size: 0.75rem; border-bottom: 2px solid #000; z-index: 1000;
+        }
+        .admin-group { display: flex; align-items: center; gap: 5px; border-right: 1px solid #555; padding-right: 10px; }
+        button { cursor: pointer; font-size: 0.7rem; padding: 2px 5px; background: #444; color: white; border: 1px solid #666; border-radius: 3px; }
+
+        /* --- HEADER INFOS --- */
+        #header-display {
+            background-color: var(--bg-1); display: grid; grid-template-columns: 1fr 1fr 1fr;
+            padding: 15px 20px; align-items: center;
+        }
+        .match-timer { font-size: 2.5rem; color: var(--txt-1); cursor: pointer; }
+        .label-v3 { color: var(--txt-3); font-size: 0.8rem; margin-bottom: 2px; }
+        .val-v1 { color: var(--txt-1); font-size: 1.2rem; }
+
+        /* --- ZONE TITRE --- */
+        #title-bar { background-color: var(--bg-2); padding: 15px; text-align: center; }
+        input.title-input {
+            background: transparent; border: none; color: var(--txt-2);
+            font-size: 2.2rem; text-align: center; width: 100%; font-family: inherit; outline: none;
+        }
+
+        /* --- ZONE MATCH --- */
+        #match-display {
+            flex: 1; background-color: var(--bg-3);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .impro-timer { font-size: 9rem; color: var(--txt-2); font-family: monospace; cursor: pointer; line-height: 1; }
+
+        #teams-area { display: flex; width: 100%; justify-content: space-around; align-items: flex-start; position: relative; }
+        .team { width: 40%; text-align: center; }
+        .team-name { font-size: 3rem; color: var(--txt-2); margin-bottom: 10px; }
+        .logo-box { height: 120px; width: 100%; margin: 10px 0; display: flex; justify-content: center; align-items: center; }
+        .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .score { font-size: 14rem; color: var(--txt-1); cursor: pointer; user-select: none; line-height: 0.8; }
+
+        /* --- FAUTES ET MESSAGE ALERTE (ZONE CENTRALE) --- */
+        .fautes { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .faute-dot { width: 45px; height: 45px; border-radius: 50%; border: 3px solid #333; cursor: pointer; transition: 0.3s; }
+        .faute-dot.active { background-color: #ff0000; border-color: #ff4444; box-shadow: 0 0 10px #f00; }
+
+        #fault-alert {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--txt-1); 
+            font-size: 1.5rem;
+            width: 300px;
+            text-align: center;
+            font-weight: bold;
+            visibility: hidden;
+            line-height: 1.2;
+            z-index: 5;
+        }
+
+        /* --- FOOTER --- */
+        #help-footer {
+            background-color: var(--bg-3); color: var(--txt-3); font-size: 0.7rem;
+            text-align: center; padding: 10px; text-transform: none;
+            font-family: sans-serif; border-top: 1px solid #222;
+        }
+
+        /* --- ANIMATIONS --- */
+        .clignoter { color: #ff0000 !important; animation: blink 0.5s step-end infinite; }
+        .clignoter-alerte { animation: blink 0.5s step-end infinite; } /* Clignote avec Couleur1 */
+        
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        .hidden { display: none !important; }
+        .transparent { background: transparent; border: none; color: inherit; font-family: inherit; outline: none; }
+    </style>
+</head>
+<body>
+
+    <div id="admin-panel">
+        <div class="admin-group">
+            FONDS: 1<input type="color" id="cp-bg1" value="#222e35" oninput="updCol('--bg-1', this.value)">
+            2<input type="color" id="cp-bg2" value="#1a1a1a" oninput="updCol('--bg-2', this.value)">
+            3<input type="color" id="cp-bg3" value="#000000" oninput="updCol('--bg-3', this.value)">
+            <button onclick="resetBgs()">RESET</button>
+        </div>
+        <div class="admin-group">
+            TEXTES: 1<input type="color" id="cp-tx1" value="#f1c40f" oninput="updCol('--txt-1', this.value)">
+            2<input type="color" id="cp-tx2" value="#ffffff" oninput="updCol('--txt-2', this.value)">
+            3<input type="color" id="cp-tx3" value="#888888" oninput="updCol('--txt-3', this.value)">
+            <button onclick="resetTxts()">RESET</button>
+        </div>
+        <div class="admin-group">
+            MATCH: <button onclick="tglM()">Start/Pause</button> <button onclick="rstM()">Reset</button>
+        </div>
+        <div class="admin-group">
+            LOGOS: <button onclick="document.getElementById('fL').click()">Logo G.</button>
+            <button onclick="resetLogo('L')">Reset G.</button>
+            <button onclick="document.getElementById('fR').click()">Logo D.</button>
+            <button onclick="resetLogo('R')">Reset D.</button>
+        </div>
+        <button onclick="document.getElementById('admin-panel').classList.toggle('hidden')">Masquer (H)</button>
+        <input type="file" id="fL" class="hidden" onchange="ldImg(event, 'L')">
+        <input type="file" id="fR" class="hidden" onchange="ldImg(event, 'R')">
+    </div>
+
+    <div id="header-display">
+        <div class="match-timer" id="m-disp" onclick="adjM()">MATCH: 45:00</div>
+        <div style="text-align:center">
+            <div class="label-v3">NOMBRE DE JOUEURS</div>
+            <input type="text" class="transparent val-v1" value="ILLIMITÉ" style="text-align:center; width:100%">
+        </div>
+        <div style="text-align:right">
+            <div class="label-v3">CATÉGORIE</div>
+            <input type="text" class="transparent val-v1" value="LIBRE" style="text-align:right; width:100%">
+        </div>
+    </div>
+
+    <div id="title-bar">
+        <input type="text" class="title-input" value="TITRE DE L'IMPROVISATION">
+    </div>
+
+    <div id="match-display">
+        <div style="text-align: center; margin-bottom: 10px;">
+            <div class="label-v3">TEMPS RESTANT</div>
+            <div class="impro-timer" id="i-disp" onclick="adjI()">03:00</div>
+        </div>
+
+        <div id="teams-area">
+            <div class="team">
+                <input type="text" class="transparent team-name" value="LES BLEUS" style="text-align:center; width:100%">
+                <div class="logo-box" id="log-L"></div>
+                <div class="score" id="sc-L" onclick="updSc('L',1)" oncontextmenu="event.preventDefault(); updSc('L',-1)">0</div>
+                <div class="fautes" id="ft-L">
+                    <div class="faute-dot" onclick="tglFt('L',this)"></div>
+                    <div class="faute-dot" onclick="tglFt('L',this)"></div>
+                    <div class="faute-dot" onclick="tglFt('L',this)"></div>
+                </div>
+            </div>
+
+            <div id="fault-alert">3 FAUTES:<br>+1 POINT POUR L'EQUIPE ADVERSE</div>
+
+            <div class="team">
+                <input type="text" class="transparent team-name" value="LES ROUGES" style="text-align:center; width:100%">
+                <div class="logo-box" id="log-R"></div>
+                <div class="score" id="sc-R" onclick="updSc('R',1)" oncontextmenu="event.preventDefault(); updSc('R',-1)">0</div>
+                <div class="fautes" id="ft-R">
+                    <div class="faute-dot" onclick="tglFt('R',this)"></div>
+                    <div class="faute-dot" onclick="tglFt('R',this)"></div>
+                    <div class="faute-dot" onclick="tglFt('R',this)"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="help-footer">
+        ESPACE: Start/Stop Timer | R: Reset Impro | GAUCHE/DROITE: Score +1 | CTRL+GAUCHE/DROITE: Score -1 | Clic droit sur score pour diminuer | H: Masquer Admin
+    </div>
+
+    <script>
+        let tI = 180, tM = 2700, runI = null, runM = null, scL = 0, scR = 0, ftLocked = false;
+
+        function fmt(s) {
+            let m = Math.floor(s/60); let sec = s%60;
+            return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+        }
+
+        function updCol(prop, val) { document.documentElement.style.setProperty(prop, val); }
+
+        function resetBgs() {
+            const def = {'--bg-1':'#222e35','--bg-2':'#1a1a1a','--bg-3':'#000000'};
+            for(let [p,v] of Object.entries(def)) updCol(p,v);
+            document.getElementById('cp-bg1').value='#222e35'; document.getElementById('cp-bg2').value='#1a1a1a'; document.getElementById('cp-bg3').value='#000000';
+        }
+
+        function resetTxts() {
+            const def = {'--txt-1':'#f1c40f','--txt-2':'#ffffff','--txt-3':'#888888'};
+            for(let [p,v] of Object.entries(def)) updCol(p,v);
+            document.getElementById('cp-tx1').value='#f1c40f'; document.getElementById('cp-tx2').value='#ffffff'; document.getElementById('cp-tx3').value='#888888';
+        }
+
+        function tglI() {
+            if(runI){ clearInterval(runI); runI=null; }
+            else {
+                document.getElementById('i-disp').classList.remove('clignoter');
+                runI = setInterval(()=>{ if(tI>0){tI--; document.getElementById('i-disp').innerText=fmt(tI);}else{document.getElementById('i-disp').classList.add('clignoter'); clearInterval(runI); runI=null;} },1000);
+            }
+        }
+
+        function tglM() {
+            if(runM){ clearInterval(runM); runM=null; }
+            else {
+                document.getElementById('m-disp').classList.remove('clignoter');
+                runM = setInterval(()=>{ if(tM>0){tM--; document.getElementById('m-disp').innerText="MATCH: "+fmt(tM);}else{document.getElementById('m-disp').classList.add('clignoter'); clearInterval(runM); runM=null;} },1000);
+            }
+        }
+
+        function rstI(){ tI=180; document.getElementById('i-disp').innerText="03:00"; document.getElementById('i-disp').classList.remove('clignoter'); }
+        function rstM(){ tM=2700; document.getElementById('m-disp').innerText="MATCH: 45:00"; document.getElementById('m-disp').classList.remove('clignoter'); }
+        function adjI(){ let v=prompt("Secondes Impro:",tI); if(v){tI=parseInt(v); document.getElementById('i-disp').innerText=fmt(tI);} }
+        function adjM(){ let v=prompt("Secondes Match:",tM); if(v){tM=parseInt(v); document.getElementById('m-disp').innerText="MATCH: "+fmt(tM);} }
+
+        function updSc(side,v) {
+            if(side==='L'){scL=Math.max(0,scL+v); document.getElementById('sc-L').innerText=scL;}
+            else {scR=Math.max(0,scR+v); document.getElementById('sc-R').innerText=scR;}
+        }
+
+        function tglFt(side, el) {
+            if(ftLocked) return;
+            el.classList.toggle('active');
+            let p = el.parentElement;
+            if(p.querySelectorAll('.active').length >= 3) {
+                ftLocked = true;
+                const alertBox = document.getElementById('fault-alert');
+                alertBox.style.visibility = 'visible';
+                alertBox.classList.add('clignoter-alerte');
+                
+                setTimeout(() => {
+                    alertBox.style.visibility = 'hidden';
+                    alertBox.classList.remove('clignoter-alerte');
+                    p.querySelectorAll('.faute-dot').forEach(d => d.classList.remove('active'));
+                    updSc(side === 'L' ? 'R' : 'L', 1);
+                    ftLocked = false;
+                }, 5000);
+            }
+        }
+
+        function ldImg(e, side) {
+            let r=new FileReader(); r.onload=()=>{document.getElementById('log-'+side).innerHTML=`<img src="${r.result}">`;}; r.readAsDataURL(e.target.files[0]);
+        }
+
+        function resetLogo(side) {
+            document.getElementById('log-' + side).innerHTML = "";
+        }
+
+        window.onkeydown=(e)=>{
+            if(e.target.tagName==='INPUT') return;
+            if(e.key===' '){e.preventDefault(); tglI();}
+            if(e.key.toLowerCase()==='r') rstI();
+            if(e.key.toLowerCase()==='h') document.getElementById('admin-panel').classList.toggle('hidden');
+            if(e.key==='ArrowLeft') updSc('L', e.ctrlKey?-1:1);
+            if(e.key==='ArrowRight') updSc('R', e.ctrlKey?-1:1);
+        };
+    </script>
+</body>
+</html>
