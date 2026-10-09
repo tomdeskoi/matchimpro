@@ -7,7 +7,7 @@ LiveScore
 Programmation: GEMINI
 
 Le programme peut être librement utilisé et modifié. Si vous l'utilisez, ce serait 
-sympa de mentionner son concepteur ;-)
+sympa de mentionner son concepteur et de lui offrir un café: https://ko-fi.com/impromate ;-)
 
 1. PRÉSENTATION GÉNÉRALE
 ------------------------
