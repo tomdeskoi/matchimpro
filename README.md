@@ -6,3 +6,6 @@ Une interface simple et versatile pour matchs d'impro
 3. Lancer March-impro.html dans votre navigatezur favori
 4. Configurez
 5. Bon Match!
+
+
+Si vous aimez le programme, vous pouvez m'offrir un café: https://ko-fi.com/impromate ;-)
